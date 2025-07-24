@@ -21,7 +21,7 @@ class User(BaseModel):
     __tablename__ = "users"
     username: Mapped[str] = mapped_column(String(40))
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     user_token: Mapped[UUID] = mapped_column(UUID, unique=True, default=uuid4)
     role: Mapped[RoleEnum] = mapped_column(default=RoleEnum.User)
     is_active: Mapped[bool] = mapped_column(BOOLEAN, default=False)
