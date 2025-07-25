@@ -15,16 +15,15 @@ class BaseModel(Base):
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, unique=True, default=uuid4)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
-
+    disabled: Mapped[bool] = mapped_column(BOOLEAN, default=False)
 
 class User(BaseModel):
     __tablename__ = "users"
-    username: Mapped[str] = mapped_column(String(40))
+    username: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     user_token: Mapped[UUID] = mapped_column(UUID, unique=True, default=uuid4)
     role: Mapped[RoleEnum] = mapped_column(default=RoleEnum.User)
-    is_active: Mapped[bool] = mapped_column(BOOLEAN, default=False)
 
     post: Mapped[list["Post"]] = relationship(
         "Post",

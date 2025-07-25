@@ -1,5 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, class_mapper
-from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine, AsyncSession
 from .config import settings
 
 
@@ -13,7 +13,10 @@ engine = create_async_engine(
     pool_recycle=1800,
 )
 
-async_session_factory = async_sessionmaker(engine)
+async_session_factory = async_sessionmaker(
+    engine,     
+    expire_on_commit=False,
+    class_=AsyncSession)
 
 
 class Base(AsyncAttrs, DeclarativeBase):

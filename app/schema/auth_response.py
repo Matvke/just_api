@@ -1,4 +1,4 @@
-from pydantic import BaseModel, UUID4, ConfigDict
+from pydantic import BaseModel, UUID4, ConfigDict, EmailStr
 from app.core.enums import RoleEnum
 
 
@@ -10,10 +10,8 @@ class SignInResponse(BaseModel):
 
 
 class GetUserResponse(BaseModel):
-    name: str
-    email: str
-    user_token: UUID4
-    role: RoleEnum
-
+    username: str
+    email: EmailStr
+    disabled: bool
     model_config = ConfigDict(from_attributes=True)
     

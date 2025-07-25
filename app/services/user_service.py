@@ -16,8 +16,16 @@ class UserService():
         return user
     
 
-    async def get_user(self, username: str) -> User:
+    async def get_user_by_username(self, username: str) -> User:
         user = await self.repository.get_one_by_filters(username=username)
         if not user:
             raise NotFoundException(f"User with username {username} not found.") 
         return user
+    
+
+    async def get_user_by_email(self, email: str) -> User:
+        user = await self.repository.get_one_by_filters(email=email)
+        if not user:
+            raise NotFoundException(f"User with email {email} not found.")
+        return user
+    

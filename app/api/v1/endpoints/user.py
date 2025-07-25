@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
-from app.schema.security_schema import User
+from app.schema.auth_response import GetUserResponse
+from app.model.models import User
 from typing import Annotated
-from app.core.security import get_current_active_user
+from app.core.dependencies import get_current_active_user
 
 
 router = APIRouter(
@@ -10,9 +11,10 @@ router = APIRouter(
 )
 
 
-@router.get("/me", response_model=User)
-async def get_user(current_user: Annotated[User, Depends(get_current_active_user)]) -> User:
-    return User.model_validate(current_user)
+@router.get("/me", response_model=GetUserResponse)
+async def get_user(current_user: Annotated[User, Depends(get_current_active_user)]) -> GetUserResponse:
+    return GetUserResponse.model_validate(current_user)
+
 
 @router.get("/users/me/items/")
 async def read_own_items(

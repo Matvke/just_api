@@ -17,10 +17,11 @@ class BaseRepository(ABC, Generic[T]):
         raise NotImplementedError
 
     async def create(self, data: dict) -> T:
-        async with self.session.begin():
-            instance = self.model(**data)
-            self.session.add(instance)
-            return instance
+        instance = self.model(**data)
+        self.session.add(instance)
+        await self.session.flush()
+        await self.session.refresh(instance)
+        return instance
     
 
     async def get_by_id(self, id: UUID) -> T | None:
@@ -62,24 +63,14 @@ class BaseRepository(ABC, Generic[T]):
     
 
     async def update(self, id: UUID, data: dict) -> T | None:
-        async with self.session.begin():
-            await self.session.execute(
-                update(self.model)
-                .where(self.model.id == id)
-                .values(**data))
-            
-            return await self.get_by_id(id)
+        await self.session.execute(
+            update(self.model)
+            .where(self.model.id == id)
+            .values(**data))
+        
+        return await self.get_by_id(id)
     
 
     async def delete(self, id: UUID) -> None:
-        async with self.session.begin():
-            await self.session.execute(
-                delete(self.model).where(self.model.id == id))
-
-
-    async def soft_delete(self, id: UUID) -> None:
-        async with self.session.begin():
-            await self.session.execute(
-                update(self.model)
-                .where(self.model.id == id)
-                .values(is_active = False))
+        await self.session.execute(
+            delete(self.model).where(self.model.id == id))

@@ -1,10 +1,10 @@
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel
 
 
-class User(BaseModel):
-    username: str
-    email: EmailStr
-    is_active: bool
-    password: str
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
-    model_config = ConfigDict(from_attributes=True)
+
+class TokenData(BaseModel):
+    username: str | None = None
