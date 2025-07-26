@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from app.dependencies.service_dependencies import AuthServiceDep
 from app.core.security import ACCESS_TOKEN_EXPIRE_MINUTES
-from app.schema import SignUpRequest, GetUserResponse, Token
+from app.schemas import SignUpRequest, GetUserResponse, Token
 from app.exceptions import NotCreatedException
 from typing import Annotated
 from datetime import timedelta

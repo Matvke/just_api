@@ -4,7 +4,7 @@ from app.dependencies.service_dependencies import UserServiceDep
 from app.core.security import oauth2_scheme, SECRET_KEY, ALGORITHM
 from app.model.models import User
 import jwt
-from app.schema.security_schema import TokenData
+from app.schemas.security_schema import TokenData
 from jwt import InvalidTokenError
 
 

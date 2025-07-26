@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import jwt
 from app.repository import UserRepository
-from app.schema import SignUpRequest
+from app.schemas import SignUpRequest
 from app.core.security import SECRET_KEY, ALGORITHM, pwd_context
 from app.model.models import User
 from app.exceptions.service_exceptions import NotCreatedException
