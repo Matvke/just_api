@@ -12,3 +12,8 @@ class NotFoundException(MessageException):
 class NotCreatedException(MessageException):
     def __init__(self, message = "Failed to create entity", *args):
         super().__init__(message, *args)
+
+
+class InvalidCredentialsException(MessageException):
+    def __init__(self, message = "Could not validate credentials", *args):
+        super().__init__(message, *args)

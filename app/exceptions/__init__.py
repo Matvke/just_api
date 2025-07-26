@@ -1,1 +1,2 @@
-from .service_exceptions import NotCreatedException, NotFoundException, MessageException
+from .service_exceptions import NotCreatedException, NotFoundException, MessageException, InvalidCredentialsException
+from .http_exceptions import CredentialsException

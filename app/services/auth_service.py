@@ -4,7 +4,8 @@ from app.repository import UserRepository
 from app.schemas import SignUpRequest
 from app.core.security import SECRET_KEY, ALGORITHM, pwd_context
 from app.model.models import User
-from app.exceptions.service_exceptions import NotCreatedException
+from app.exceptions.service_exceptions import NotCreatedException, InvalidCredentialsException, NotFoundException
+from app.schemas import TokenData
 
 
 class AuthService():
@@ -57,3 +58,20 @@ class AuthService():
         except Exception as e:
             await self.repository.session.rollback()
             raise e
+        
+
+    async def get_user_from_token(self, token: str) -> User:
+        try: 
+            payload: dict = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            username = payload.get("sub")
+            if username is None:
+                raise InvalidCredentialsException()
+            token_data = TokenData(username=username)
+
+        except jwt.InvalidTokenError:
+            raise InvalidCredentialsException()
+        
+        user = await self.repository.get_one_by_filters(username=token_data.username)
+        if user is None:
+            raise NotFoundException(f"User {username} not found")
+        return user
