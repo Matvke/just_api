@@ -12,8 +12,3 @@ class NotFoundException(MessageException):
 class NotCreatedException(MessageException):
     def __init__(self, message = "Failed to create entity", *args):
         super().__init__(message, *args)
-
-
-class UserAlreadyExistsException(MessageException):
-    def __init__(self, message = "User already exists", *args):
-        super().__init__(message, *args)

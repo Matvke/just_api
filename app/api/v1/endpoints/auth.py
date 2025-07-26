@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from typing import Annotated
-from app.core.dependencies import AuthServiceDep
+from app.dependencies.service_dependencies import AuthServiceDep
 from app.core.security import ACCESS_TOKEN_EXPIRE_MINUTES
+from app.schema import SignUpRequest, GetUserResponse, Token
+from app.exceptions import NotCreatedException
+from typing import Annotated
 from datetime import timedelta
-from app.schema import SignUpRequest, GetUserResponse
-from app.schema.security_schema import Token
-from app.core.exceptions import NotCreatedException
+
 
 router = APIRouter(
     prefix="/auth",
