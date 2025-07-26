@@ -1,7 +1,7 @@
 from uuid import UUID
 from app.repository import UserRepository
 from app.model.models import User
-from app.core.exceptions import NotFoundException
+from app.exceptions.service_exceptions import NotFoundException
 
 
 class UserService():

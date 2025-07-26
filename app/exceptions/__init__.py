@@ -1,1 +1,1 @@
-from .service_exceptions import NotCreatedException, NotFoundException
+from .service_exceptions import NotCreatedException, NotFoundException, MessageException

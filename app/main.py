@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from app.api.v1.routes import routers
-from app.core.exception_handlers import message_exception_handler
-from app.core.exceptions import MessageException
+from app.exceptions.exception_handlers import message_exception_handler
+from app.exceptions import MessageException
 
 app = FastAPI()
 app.include_router(routers)
