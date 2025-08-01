@@ -10,6 +10,7 @@ class SignInResponse(BaseModel):
 
 
 class GetUserResponse(BaseModel):
+    id: UUID4
     username: str
     email: EmailStr
     disabled: bool

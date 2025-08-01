@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from app.model.models import BaseModel
-from sqlalchemy import select, update, delete
+from sqlalchemy import and_, not_, select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 from uuid import UUID
 
 T = TypeVar("T", bound=BaseModel)
@@ -27,25 +27,16 @@ class BaseRepository(ABC, Generic[T]):
     async def get_by_id(self, id: UUID) -> T | None:
         result = await self.session.execute(
             select(self.model)
-            .where(self.model.id == id))
-        
-        if not result:
-            return None
+            .where(
+                and_(self.model.id == id,
+                not_(self.model.disabled))))
         return result.scalar_one_or_none()
 
-
-    async def get_all(self, skip: int = 0, limit: int = 100) -> list[T]:
-        result = await self.session.execute(
-            select(self.model)
-            .offset(skip)
-            .limit(limit))
-        
-        return result.scalars().all()
     
-
     async def get_many_by_filters(self, skip: int = 0, limit: int = 100, **filters) -> list[T]:
         result = await self.session.execute(
             select(self.model)
+            .where(not_(self.model.disabled))
             .filter_by(**filters)
             .offset(skip)
             .limit(limit))
@@ -54,23 +45,46 @@ class BaseRepository(ABC, Generic[T]):
 
 
     async def get_one_by_filters(self, **filters) -> T | None:
-        """Возвращает первое совпадение."""
         result = await self.session.execute(
             select(self.model)
+            .where(
+                not_(self.model.disabled))
             .filter_by(**filters))
 
-        return result.scalars().first()
+        return result.scalar_one_or_none()
     
 
-    async def update(self, id: UUID, data: dict) -> T | None:
+    async def update_one_by_id(self, id: UUID, data: dict) -> T | None:
         await self.session.execute(
             update(self.model)
-            .where(self.model.id == id)
+            .where(
+                and_(self.model.id == id,
+                not_(self.model.disabled)))
             .values(**data))
         
         return await self.get_by_id(id)
     
 
-    async def delete(self, id: UUID) -> None:
+    async def update_attr(self, id: UUID, column: str, value: Any) -> T:
+        await self.session.execute(
+            update(self.model)
+            .where(
+                and_(self.model.id == id,
+                not_(self.model.disabled)))
+            .values(**{column: value})
+        )
+
+        return await self.get_by_id(id)
+
+
+    async def update_disabled_attr(self, value: bool, **filters) -> None:
+        await self.session.execute(
+            update(self.model)
+            .filter_by(**filters)
+            .values(disabled = value)
+        )
+
+
+    async def hard_delete_one_by_id(self, id: UUID) -> None:
         await self.session.execute(
             delete(self.model).where(self.model.id == id))

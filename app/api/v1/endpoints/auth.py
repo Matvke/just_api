@@ -10,7 +10,7 @@ from datetime import timedelta
 
 router = APIRouter(
     prefix="/auth",
-    tags=["auth"]
+    tags=["Auth"]
 )
 
 @router.post("/token")
@@ -29,7 +29,7 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@router.post("/sign_up", response_model=GetUserResponse)
+@router.post("/new", response_model=GetUserResponse)
 async def sign_up(service: AuthServiceDep, form_data: SignUpRequest) -> GetUserResponse:
     try:
         user = await service.sign_up(form_data)
