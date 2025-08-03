@@ -44,12 +44,12 @@ class BaseRepository(ABC, Generic[T]):
         return result.scalars().all()
 
 
-    async def get_one_by_filters(self, **filters) -> T | None:
-        result = await self.session.execute(
-            select(self.model)
-            .where(
-                not_(self.model.disabled))
-            .filter_by(**filters))
+    async def get_one_by_filters(self, include_disabled: bool = False, **filters) -> T | None:
+        query = select(self.model).filter_by(**filters)
+        if not include_disabled:
+            query = query.where(not_(self.model.disabled))
+
+        result = await self.session.execute(query)
 
         return result.scalar_one_or_none()
     
@@ -83,6 +83,14 @@ class BaseRepository(ABC, Generic[T]):
             .filter_by(**filters)
             .values(disabled = value)
         )
+
+    
+    async def soft_delete(self, **filters) -> None:
+        await self.update_disabled_attr(value=True, **filters)
+
+    
+    async def restore(self, **filters) -> None:
+        await self.update_disabled_attr(value=False, **filters)
 
 
     async def hard_delete_one_by_id(self, id: UUID) -> None:

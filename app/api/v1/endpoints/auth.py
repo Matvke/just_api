@@ -23,6 +23,9 @@ async def login_for_access_token(
     if not user:
         raise CredentialsException(detail="Incorrect username or password")
     
+    if user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = service.create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
 

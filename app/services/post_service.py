@@ -53,20 +53,21 @@ class PostService():
             await self.repository.session.rollback()
             raise e
         return post
+        
     
-    
-    async def _update_post_disable_attr(self, post_id: UUID, user_id: UUID, value: bool) -> None:
+    async def delete_post(self, post_id: UUID, user_id: UUID) -> None:
         try:
-            await self.repository.update_disabled_attr(id=post_id, value=value, user_id=user_id)
+            await self.repository.soft_delete(id=post_id, user_id=user_id)
             await self.repository.session.commit()
         except Exception as e:
             await self.repository.session.rollback()
             raise e 
-        
-    
-    async def delete_post(self, post_id: UUID, user_id: UUID) -> None:
-        await self._update_post_disable_attr(post_id, user_id, True)
 
     
     async def restore_post(self, post_id: UUID, user_id: UUID) -> None:
-        await self._update_post_disable_attr(post_id, user_id, False)
+        try:
+            await self.repository.restore(id=post_id, user_id=user_id)
+            await self.repository.session.commit()
+        except Exception as e:
+            await self.repository.session.rollback()
+            raise e 

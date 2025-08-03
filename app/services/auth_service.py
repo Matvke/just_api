@@ -22,7 +22,7 @@ class AuthService():
     
 
     async def authenticate_user(self, username: str, password: str) :
-        user = await self.repository.get_one_by_filters(username=username)
+        user = await self.repository.get_one_by_filters(include_disabled=True, username=username)
         if not user:
             return False
         if not self.verify_password(password, user.hashed_password):
@@ -71,7 +71,7 @@ class AuthService():
         except jwt.InvalidTokenError:
             raise InvalidCredentialsException()
         
-        user = await self.repository.get_one_by_filters(username=token_data.username)
+        user = await self.repository.get_one_by_filters(include_disabled=True, username=token_data.username)
         if user is None:
             raise NotFoundException(f"User {username} not found")
         return user
